@@ -55,17 +55,6 @@ BarWidget {
         // 0.5x at 0% CPU, up to 3x at 100% CPU
         return 0.5 + (cpuPercent / 100) * 2.5
       }
-      
-      ToolTip {
-        visible: mouseArea.containsMouse
-        text: "CPU: " + cpuPercent.toFixed(1) + "%"
-      }
-    }
-
-    MouseArea {
-      id: mouseArea
-      anchors.fill: parent
-      hoverEnabled: true
     }
   }
 }
