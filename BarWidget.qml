@@ -2,13 +2,14 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Ui
+import qs.Commons
 
 BarWidget {
   id: root
   moduleName: "henry.cpu-catjam"
 
-  implicitWidth: catjamImage.implicitWidth + Style.space(8)
-  implicitHeight: catjamImage.implicitHeight + Style.space(4)
+  implicitWidth: 32
+  implicitHeight: 24
 
   property real cpuPercent: 0
 
@@ -19,7 +20,7 @@ BarWidget {
     running: true
     
     onExited: function(exitCode, exitStatus) {
-      if (exitCode === 0) {
+      if (exitCode === 0 && stdout) {
         var output = stdout.trim()
         var value = parseFloat(output)
         if (!isNaN(value)) {
