@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "henry.cpu-catjam",
+  "name": "CPU Catjam",
+  "version": "1.0.0",
+  "author": "Henry",
+  "license": "MIT",
+  "description": "A dancing catjam gif that bops faster based on CPU usage. Higher CPU = faster jams!",
+  "kinds": ["bar-widget"],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "CPU Catjam",
+    "category": "System",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}
