@@ -27,33 +27,6 @@ Panel {
     return false
   }
 
-  // CPU usage monitor
-  Process {
-    id: cpuMonitor
-    command: ["sh", "-c", "top -bn1 | grep 'Cpu(s)' | sed 's/.*, *\\([0-9.]*\\)%* id.*/\\1/' | awk '{print 100 - $1}'"]
-    running: root.opened
-    
-    onExited: function(exitCode, exitStatus) {
-      if (exitCode === 0 && stdout) {
-        var output = stdout.trim()
-        var value = parseFloat(output)
-        if (!isNaN(value)) {
-          cpuPercent = value
-        }
-      }
-      if (root.opened) {
-        restartTimer.start()
-      }
-    }
-  }
-
-  Timer {
-    id: restartTimer
-    interval: 200  // Update faster when panel is open
-    repeat: false
-    onTriggered: if (root.opened) cpuMonitor.running = true
-  }
-
   KeyboardPanel {
     id: panel
     anchorItem: root.anchorItem

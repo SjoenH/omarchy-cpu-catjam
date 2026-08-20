@@ -38,15 +38,19 @@ BarWidget {
 
   onBarChanged: injectPanel()
 
-  // CPU usage monitor using top command
+  // CPU usage monitor using vmstat
   Process {
     id: cpuMonitor
-    command: ["sh", "-c", "top -bn1 | grep 'Cpu(s)' | sed 's/.*, *\\([0-9.]*\\)%* id.*/\\1/' | awk '{print 100 - $1}'"]
+    command: ["sh", "-c", "vmstat 1 2 | tail -1 | awk '{print 100-$15}'"]
     running: true
     
+    stdout: StdioCollector {
+      id: stdoutCollector
+    }
+    
     onExited: function(exitCode, exitStatus) {
-      if (exitCode === 0 && stdout) {
-        var output = stdout.trim()
+      if (exitCode === 0 && stdoutCollector.data) {
+        var output = String(stdoutCollector.data).trim()
         var value = parseFloat(output)
         if (!isNaN(value)) {
           cpuPercent = value
@@ -56,14 +60,14 @@ BarWidget {
           }
         }
       }
-      // Restart after 500ms
+      // Restart after 1500ms (vmstat takes 1 second)
       restartTimer.start()
     }
   }
 
   Timer {
     id: restartTimer
-    interval: 500
+    interval: 1500
     repeat: false
     onTriggered: cpuMonitor.running = true
   }
