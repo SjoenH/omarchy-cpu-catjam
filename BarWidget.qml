@@ -8,8 +8,8 @@ BarWidget {
   id: root
   moduleName: "henry.cpu-catjam"
 
-  implicitWidth: button.implicitWidth
-  implicitHeight: button.implicitHeight
+  implicitWidth: catjamImage.width + 8
+  implicitHeight: catjamImage.height + 4
 
   property real cpuPercent: 0
 
@@ -32,7 +32,7 @@ BarWidget {
   function injectPanel() {
     if (!panelLoader.item) return
     panelLoader.item.bar = root.bar
-    panelLoader.item.anchorItem = button
+    panelLoader.item.anchorItem = root
     panelLoader.item.hostWidget = root
   }
 
@@ -79,15 +79,10 @@ BarWidget {
     }
   }
 
-  WidgetButton {
-    id: button
+  MouseArea {
     anchors.fill: parent
-    bar: root.bar
-    tooltipText: "CPU: " + cpuPercent.toFixed(1) + "%"
-    
-    onPressed: function(buttonCode) {
-      if (buttonCode === Qt.LeftButton) root.toggle()
-    }
+    hoverEnabled: true
+    onClicked: root.toggle()
     
     AnimatedImage {
       id: catjamImage
