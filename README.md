@@ -14,7 +14,7 @@ A stupid fun CPU visualizer for Omarchy Quattro that plays the iconic catjam gif
 ## Install
 
 ```sh
-omarchy plugin add https://github.com/yourusername/omarchy-cpu-catjam.git --enable
+omarchy plugin add https://github.com/SjoenH/omarchy-cpu-catjam.git --enable
 ```
 
 ## Usage
