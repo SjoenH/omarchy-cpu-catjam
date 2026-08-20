@@ -6,7 +6,7 @@ import qs.Commons
 
 BarWidget {
   id: root
-  moduleName: "henry.cpu-catjam"
+  moduleName: "no.koka.cpu-catjam"
 
   implicitWidth: catjamImage.width + 8
   implicitHeight: catjamImage.height + 4

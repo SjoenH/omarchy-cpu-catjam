@@ -8,8 +8,9 @@ A stupid fun CPU visualizer for Omarchy Quattro that plays the iconic catjam gif
 
 - Real-time CPU monitoring
 - Animated catjam gif that speeds up with CPU usage
-- Tooltip shows exact CPU percentage
-- Minimal performance impact (updates every 500ms)
+- Hover tooltip shows exact CPU percentage
+- Click to open detailed stats panel with color-coded progress bar
+- Minimal performance impact (updates every 1.5s)
 
 ## Install
 
@@ -21,30 +22,32 @@ omarchy plugin add https://github.com/SjoenH/omarchy-cpu-catjam.git --enable
 
 The catjam will automatically appear in your bar and start jamming! The animation speed adjusts based on CPU:
 
-- **0-20% CPU**: Slow, chill vibes
+- **0-20% CPU**: Slow, chill vibes (0.5x speed)
 - **20-60% CPU**: Medium speed, getting into it
-- **60-100% CPU**: MAXIMUM OVERDRIVE JAM
+- **60-100% CPU**: MAXIMUM OVERDRIVE JAM (3x speed)
 
-Hover over the catjam to see the exact CPU percentage.
+- **Hover** over the catjam to see the exact CPU percentage
+- **Click** to open a detailed panel with stats and progress bar
 
 ## Configure
 
 Move it to a different bar section:
 
 ```sh
-omarchy bar move henry.cpu-catjam --section left
+omarchy bar move no.koka.cpu-catjam --section left
 ```
 
 ## Remove
 
 ```sh
-omarchy plugin remove henry.cpu-catjam
+omarchy plugin remove no.koka.cpu-catjam
 ```
 
 ## Credits
 
 - Catjam gif from the internet meme culture
 - Built for Omarchy Quattro
+- By [koka.no](https://koka.no)
 
 ## License
 

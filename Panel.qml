@@ -6,7 +6,7 @@ import qs.Ui
 
 Panel {
   id: root
-  moduleName: "henry.cpu-catjam"
+  moduleName: "no.koka.cpu-catjam"
   manageIpc: false
 
   property var anchorItem: null

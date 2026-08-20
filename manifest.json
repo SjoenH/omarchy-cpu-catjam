@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "henry.cpu-catjam",
+  "id": "no.koka.cpu-catjam",
   "name": "CPU Catjam",
   "version": "1.0.0",
-  "author": "Henry",
+  "author": "koka.no",
   "license": "MIT",
   "description": "A dancing catjam gif that bops faster based on CPU usage. Higher CPU = faster jams!",
   "kinds": ["bar-widget"],
