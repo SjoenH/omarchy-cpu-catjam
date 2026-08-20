@@ -1,6 +1,6 @@
 import QtQuick
 import Quickshell
-import Quickshell.Services.SystemStats
+import Quickshell.Io
 import qs.Ui
 
 BarWidget {
@@ -10,21 +10,32 @@ BarWidget {
   implicitWidth: catjamImage.implicitWidth + Style.space(8)
   implicitHeight: catjamImage.implicitHeight + Style.space(4)
 
-  // CPU usage monitor
-  CpuUsage {
+  property real cpuPercent: 0
+
+  // CPU usage monitor using top command
+  Process {
     id: cpuMonitor
-    updateInterval: 500  // Update every 500ms
+    command: ["sh", "-c", "top -bn1 | grep 'Cpu(s)' | sed 's/.*, *\\([0-9.]*\\)%* id.*/\\1/' | awk '{print 100 - $1}'"]
+    running: true
+    
+    onExited: function(exitCode, exitStatus) {
+      if (exitCode === 0) {
+        var output = stdout.trim()
+        var value = parseFloat(output)
+        if (!isNaN(value)) {
+          cpuPercent = value
+        }
+      }
+      // Restart after 500ms
+      restartTimer.start()
+    }
   }
 
-  // Calculate animation speed based on CPU usage
-  // Low CPU (0-20%): slow (2000ms per frame)
-  // Medium CPU (20-60%): medium (1000ms per frame)
-  // High CPU (60-100%): fast (300ms per frame)
-  property real cpuPercent: cpuMonitor.usage * 100
-  property int frameInterval: {
-    if (cpuPercent < 20) return 2000
-    if (cpuPercent < 60) return 1000 - (cpuPercent - 20) * 17.5  // Gradually speed up
-    return Math.max(100, 1000 - (cpuPercent - 20) * 17.5)  // Cap at 100ms minimum
+  Timer {
+    id: restartTimer
+    interval: 500
+    repeat: false
+    onTriggered: cpuMonitor.running = true
   }
 
   Rectangle {
