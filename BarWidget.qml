@@ -86,6 +86,20 @@ BarWidget {
   MouseArea {
     anchors.fill: parent
     hoverEnabled: true
+    cursorShape: Qt.PointingHandCursor
+    
+    onEntered: {
+      if (root.bar) {
+        root.bar.showTooltip(root, "CPU: " + cpuPercent.toFixed(1) + "%")
+      }
+    }
+    
+    onExited: {
+      if (root.bar) {
+        root.bar.hideTooltip(root)
+      }
+    }
+    
     onClicked: root.toggle()
     
     AnimatedImage {
