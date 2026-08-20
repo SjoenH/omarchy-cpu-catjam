@@ -99,9 +99,9 @@ Panel {
 
           Text {
             text: cpuPercent.toFixed(1) + "%"
-            color: root.barAccent
+            color: root.barForeground
             font.family: root.bar ? root.bar.fontFamily : Style.font.family
-            font.pixelSize: Style.font.displayMedium
+            font.pixelSize: Style.font.title
             font.bold: true
           }
         }
@@ -110,16 +110,16 @@ Panel {
         Rectangle {
           width: parent.width - Style.space(8)
           height: Style.space(20)
-          color: Color.blend(root.barBackground, root.barForeground, 0.1)
+          color: Qt.rgba(root.barForeground.r, root.barForeground.g, root.barForeground.b, 0.1)
           radius: Style.space(4)
 
           Rectangle {
             width: parent.width * (cpuPercent / 100)
             height: parent.height
             color: {
-              if (cpuPercent < 30) return Color.blend(root.barForeground, "#00ff00", 0.7)
-              if (cpuPercent < 70) return Color.blend(root.barForeground, "#ffaa00", 0.7)
-              return Color.blend(root.barForeground, "#ff0000", 0.7)
+              if (cpuPercent < 30) return "#00cc66"
+              if (cpuPercent < 70) return "#ffaa00"
+              return "#ff4444"
             }
             radius: Style.space(4)
 
