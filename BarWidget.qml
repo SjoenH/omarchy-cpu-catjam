@@ -8,8 +8,8 @@ BarWidget {
   id: root
   moduleName: "henry.cpu-catjam"
 
-  implicitWidth: 32
-  implicitHeight: 24
+  implicitWidth: button.implicitWidth
+  implicitHeight: button.implicitHeight
 
   property real cpuPercent: 0
 
@@ -39,9 +39,11 @@ BarWidget {
     onTriggered: cpuMonitor.running = true
   }
 
-  Rectangle {
+  WidgetButton {
+    id: button
     anchors.fill: parent
-    color: "transparent"
+    bar: root.bar
+    tooltipText: "CPU: " + cpuPercent.toFixed(1) + "%"
     
     AnimatedImage {
       id: catjamImage
