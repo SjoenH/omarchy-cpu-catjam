@@ -13,6 +13,15 @@ BarWidget {
 
   property real cpuPercent: 0
 
+  readonly property var gifOptions: [
+    { value: "catjam.gif", label: "Catjam" },
+    { value: "parrot.gif", label: "Parrot" },
+    { value: "cool-doge.gif", label: "Cool Doge" },
+    { value: "confused_dog.gif", label: "Confused Dog" },
+    { value: "nyancat.gif", label: "Nyan Cat" }
+  ]
+  property string currentGif: setting("gif", "catjam.gif")
+
   readonly property bool opened: panelLoader.item
     ? panelLoader.item.opened === true
     : false
@@ -37,6 +46,16 @@ BarWidget {
   }
 
   onBarChanged: injectPanel()
+
+  function changeGif(gifFile) {
+    var entry = { id: root.moduleName }
+    for (var key in root.settings) if (key !== "id") entry[key] = root.settings[key]
+    entry["gif"] = gifFile
+    root.settings = entry
+    root.currentGif = gifFile
+    if (root.bar && root.bar.shell && typeof root.bar.shell.updateEntryInline === "function")
+      root.bar.shell.updateEntryInline(root.moduleName, entry)
+  }
 
   // CPU usage monitor using vmstat
   Process {
@@ -105,7 +124,7 @@ BarWidget {
     AnimatedImage {
       id: catjamImage
       anchors.centerIn: parent
-      source: Qt.resolvedUrl("catjam.gif")
+      source: Qt.resolvedUrl(root.currentGif)
       width: 24
       height: 24
       fillMode: Image.PreserveAspectFit

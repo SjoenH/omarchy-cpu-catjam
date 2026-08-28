@@ -136,6 +136,19 @@ Panel {
           opacity: 0.6
           wrapMode: Text.WordWrap
         }
+
+        // GIF selector
+        Dropdown {
+          width: parent.width - Style.space(8)
+          label: "Animation"
+          value: root.hostWidget ? root.hostWidget.currentGif : "catjam.gif"
+          options: root.hostWidget ? root.hostWidget.gifOptions : []
+          fontFamily: root.bar ? root.bar.fontFamily : Style.font.family
+          onChanged: function(v) {
+            if (root.hostWidget && typeof root.hostWidget.changeGif === "function")
+              root.hostWidget.changeGif(v)
+          }
+        }
       }
     }
   }
