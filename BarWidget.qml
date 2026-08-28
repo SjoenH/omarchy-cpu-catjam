@@ -52,7 +52,6 @@ BarWidget {
     for (var key in root.settings) if (key !== "id") entry[key] = root.settings[key]
     entry["gif"] = gifFile
     root.settings = entry
-    root.currentGif = gifFile
     if (root.bar && root.bar.shell && typeof root.bar.shell.updateEntryInline === "function")
       root.bar.shell.updateEntryInline(root.moduleName, entry)
   }
