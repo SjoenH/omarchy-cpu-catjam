@@ -26,6 +26,7 @@ Panel {
         return false;
     }
 
+    objectName: "cpuCatjamPanel"
     moduleName: "no.koka.cpu-catjam"
     manageIpc: false
 
@@ -158,6 +159,7 @@ Panel {
 
                 // GIF selector
                 Dropdown {
+                    objectName: "animationPicker"
                     width: parent.width - Style.space(8)
                     label: "Animation"
                     value: root.hostWidget ? root.hostWidget.currentGif : "catjam.gif"

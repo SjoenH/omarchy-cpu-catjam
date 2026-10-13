@@ -24,7 +24,12 @@ BarWidget {
         "value": "nyancat.gif",
         "label": "Nyan Cat"
     }]
-    property string currentGif: setting("gif", "catjam.gif")
+    readonly property string defaultGif: "catjam.gif"
+    // The gif setting comes from shell.json. Only a bundled animation is ever
+    // loaded: an unknown name would leave the widget blank, and a path or URL
+    // would make it read or fetch whatever the setting points at.
+    property string currentGif: root.knownGif(setting("gif", root.defaultGif))
+    readonly property int imageSize: Math.min(24, root.barSize - 2)
     readonly property bool opened: panelLoader.item ? panelLoader.item.opened === true : false
 
     function open() {
@@ -54,6 +59,15 @@ BarWidget {
         panelLoader.item.hostWidget = root;
     }
 
+    function knownGif(file) {
+        for (var i = 0; i < root.gifOptions.length; i++) {
+            if (root.gifOptions[i].value === file)
+                return file;
+
+        }
+        return root.defaultGif;
+    }
+
     function changeGif(gifFile) {
         var entry = {
             "id": root.moduleName
@@ -61,7 +75,7 @@ BarWidget {
         for (var key in root.settings) if (key !== "id") {
             entry[key] = root.settings[key];
         }
-        entry["gif"] = gifFile;
+        entry["gif"] = root.knownGif(gifFile);
         root.settings = entry;
         if (root.bar && root.bar.shell && typeof root.bar.shell.updateEntryInline === "function")
             root.bar.shell.updateEntryInline(root.moduleName, entry);
@@ -70,7 +84,9 @@ BarWidget {
 
     moduleName: "no.koka.cpu-catjam"
     implicitWidth: catjamImage.width + 8
-    implicitHeight: catjamImage.height + 4
+    // Exactly the bar's height. Being taller than the bar made the whole
+    // section taller, which shifted every widget next to this one.
+    implicitHeight: root.barSize
     onBarChanged: injectPanel()
 
     // CPU usage monitor using vmstat
@@ -140,10 +156,11 @@ BarWidget {
         AnimatedImage {
             id: catjamImage
 
+            objectName: "animation"
             anchors.centerIn: parent
             source: Qt.resolvedUrl(root.currentGif)
-            width: 24
-            height: 24
+            width: root.imageSize
+            height: root.imageSize
             fillMode: Image.PreserveAspectFit
             playing: true
             speed: {
