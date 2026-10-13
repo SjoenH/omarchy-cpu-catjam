@@ -92,6 +92,20 @@ Item {
         h.compare(h.lastPersisted().gif, "catjam.gif");
     }
 
+    function* test_clickingATilePicksThatAnimation() {
+        var w = h.createWidget({
+        });
+        yield 50;
+        w.open();
+        yield 50;
+        h.compare(h.byName("animationName").text, "Catjam");
+        h.click(h.byName("animationTile-nyancat.gif"));
+        yield 50;
+        h.compare(h.lastPersisted().gif, "nyancat.gif");
+        h.compare(w.currentGif, "nyancat.gif");
+        h.compare(h.byName("animationPicker").value, "nyancat.gif");
+    }
+
     // --- CPU ---------------------------------------------------------------
 
     function test_speedFollowsCpuUsage() {
@@ -115,6 +129,28 @@ Item {
         w.open();
         yield 50;
         h.compare(h.byName("cpuCatjamPanel").cpuPercent, w.cpuPercent, "the panel shows the same reading");
+    }
+
+    function* test_theCardShowsTheLoad() {
+        var w = h.createWidget({
+        });
+        yield 50;
+        w.open();
+        yield 50;
+        var panel = h.byName("cpuCatjamPanel");
+        var card = h.byName("usageCard");
+        panel.cpuPercent = 5;
+        h.compare(card.value + card.unit, "5.0%");
+        h.compare(card.detail, "Chill vibes");
+        h.compare(card.note, "0.63\u00d7 speed");
+        h.compare(card.progress, 0.05);
+        h.compare(h.byName("titleCaption").text, "Your CPU is at 5%");
+        panel.cpuPercent = 45;
+        h.compare(card.detail, "Getting into it");
+        panel.cpuPercent = 100;
+        h.compare(card.detail, "Maximum overdrive");
+        h.compare(card.note, "3.00\u00d7 speed");
+        h.compare(card.progress, 1);
     }
 
     function* test_thePanelOpensAndCloses() {
