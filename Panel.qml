@@ -1,6 +1,4 @@
 import QtQuick
-import Quickshell
-import Quickshell.Io
 import qs.Commons
 import qs.Ui
 
@@ -10,6 +8,11 @@ Panel {
     property var anchorItem: null
     property var hostWidget: null
     property real cpuPercent: 0
+    readonly property color foreground: root.barForeground
+    readonly property string fontFamily: root.bar ? root.bar.fontFamily : Style.font.family
+    readonly property string currentGif: root.hostWidget ? root.hostWidget.currentGif : "catjam.gif"
+    // 0.5x at 0% CPU, up to 3x at 100% CPU: the same curve as the bar.
+    readonly property real speed: 0.5 + (root.cpuPercent / 100) * 2.5
 
     function open() {
         root.controller.show();
@@ -26,8 +29,32 @@ Panel {
         return false;
     }
 
+    function mood() {
+        if (root.cpuPercent < 20)
+            return "Chill vibes";
+
+        if (root.cpuPercent < 60)
+            return "Getting into it";
+
+        return "Maximum overdrive";
+    }
+
+    // CONVENTION-EXCEPTION: load is green, amber or red on every theme.
+    function loadColor() {
+        if (root.cpuPercent < 30)
+            return "#00cc66";
+
+        if (root.cpuPercent < 70)
+            return "#ffaa00";
+
+        return "#ff4444";
+    }
+
+    objectName: "cpuCatjamPanel"
     moduleName: "no.koka.cpu-catjam"
     manageIpc: false
+    Accessible.role: Accessible.Dialog
+    Accessible.name: "CPU Catjam"
 
     KeyboardPanel {
         id: panel
@@ -37,7 +64,7 @@ Panel {
         bar: root.bar
         open: root.opened
         focusTarget: keyCatcher
-        contentWidth: panel.fittedContentWidth(Style.space(280))
+        contentWidth: panel.fittedContentWidth(Style.space(340))
         contentHeight: panel.fittedContentHeight(content.implicitHeight)
 
         PanelKeyCatcher {
@@ -54,117 +81,51 @@ Panel {
 
                 width: parent.width
                 spacing: Style.space(12)
-                padding: Style.space(4)
 
-                Text {
+                PanelTitle {
                     width: parent.width
-                    text: "CPU Catjam"
-                    color: root.barForeground
-                    font.family: root.bar ? root.bar.fontFamily : Style.font.family
-                    font.pixelSize: Style.font.subtitle
-                    font.bold: true
+                    caption: "Your CPU is at " + Math.round(root.cpuPercent) + "%"
+                    leftWord: "CPU"
+                    rightWord: "Catjam"
+                    foreground: root.foreground
+                    fontFamily: root.fontFamily
+
+                    // The chosen animation, jamming at the bar's speed.
+                    AnimatedImage {
+                        anchors.fill: parent
+                        source: Qt.resolvedUrl(root.currentGif)
+                        fillMode: Image.PreserveAspectFit
+                        playing: root.opened
+                        speed: root.speed
+                    }
+
                 }
 
-                // CPU percentage display
-                Row {
+                StatCard {
+                    objectName: "usageCard"
                     width: parent.width
-                    spacing: Style.space(8)
-
-                    Text {
-                        text: "CPU Usage:"
-                        color: root.barForeground
-                        font.family: root.bar ? root.bar.fontFamily : Style.font.family
-                        font.pixelSize: Style.font.body
-                    }
-
-                    Text {
-                        text: cpuPercent.toFixed(1) + "%"
-                        color: root.barForeground
-                        font.family: root.bar ? root.bar.fontFamily : Style.font.family
-                        font.pixelSize: Style.font.title
-                        font.bold: true
-                    }
-
+                    name: "CPU usage"
+                    detail: root.mood()
+                    value: root.cpuPercent.toFixed(1)
+                    unit: "%"
+                    note: root.speed.toFixed(2) + "× speed"
+                    progress: root.cpuPercent / 100
+                    markerColor: root.loadColor()
+                    foreground: root.foreground
+                    fontFamily: root.fontFamily
                 }
 
-                // Visual CPU bar
-                Rectangle {
-                    width: parent.width - Style.space(8)
-                    height: Style.space(20)
-                    color: Qt.rgba(root.barForeground.r, root.barForeground.g, root.barForeground.b, 0.1)
-                    radius: Style.space(4)
-
-                    Rectangle {
-                        width: parent.width * (cpuPercent / 100)
-                        height: parent.height
-                        color: {
-                            if (cpuPercent < 30)
-                                return "#00cc66";
-
-                            if (cpuPercent < 70)
-                                return "#ffaa00";
-
-                            return "#ff4444";
-                        }
-                        radius: Style.space(4)
-
-                        Behavior on width {
-                            NumberAnimation {
-                                duration: 200
-                                easing.type: Easing.OutQuad
-                            }
-
-                        }
-
-                    }
-
-                }
-
-                // Animation speed indicator
-                Column {
+                AnimationPicker {
+                    objectName: "animationPicker"
                     width: parent.width
-                    spacing: Style.space(4)
-
-                    Text {
-                        text: "Animation Speed:"
-                        color: root.barForeground
-                        font.family: root.bar ? root.bar.fontFamily : Style.font.family
-                        font.pixelSize: Style.font.body
-                    }
-
-                    Text {
-                        text: {
-                            var speed = 0.5 + (cpuPercent / 100) * 2.5;
-                            return speed.toFixed(2) + "x";
-                        }
-                        color: root.barForeground
-                        font.family: root.bar ? root.bar.fontFamily : Style.font.family
-                        font.pixelSize: Style.font.body
-                        opacity: 0.7
-                    }
-
-                }
-
-                // Info text
-                Text {
-                    width: parent.width - Style.space(8)
-                    text: "The catjam speed adjusts from 0.5x (idle) to 3x (100% CPU)"
-                    color: root.barForeground
-                    font.family: root.bar ? root.bar.fontFamily : Style.font.family
-                    font.pixelSize: Style.font.caption
-                    opacity: 0.6
-                    wrapMode: Text.WordWrap
-                }
-
-                // GIF selector
-                Dropdown {
-                    width: parent.width - Style.space(8)
-                    label: "Animation"
-                    value: root.hostWidget ? root.hostWidget.currentGif : "catjam.gif"
                     options: root.hostWidget ? root.hostWidget.gifOptions : []
-                    fontFamily: root.bar ? root.bar.fontFamily : Style.font.family
+                    value: root.currentGif
+                    speed: root.speed
+                    playing: root.opened
+                    foreground: root.foreground
+                    fontFamily: root.fontFamily
                     onChanged: function(v) {
-                        if (root.hostWidget && typeof root.hostWidget.changeGif === "function")
+                        if (root.hostWidget)
                             root.hostWidget.changeGif(v);
 
                     }
